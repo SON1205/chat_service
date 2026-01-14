@@ -38,15 +38,6 @@ public class MemberServiceImpl implements MemberService {
         return MemberCreateDto.of(member.getId(), member.getName(), member.getEmail());
     }
 
-//    public Member login(MemberLoginDto dto) {
-//        Member member = memberRepository.findByEmail(dto.getEmail())
-//                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
-//        if (!passwordEncoder.matches(dto.getPassword(), member.getPassword())) {
-//            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-//        }
-//        return member;
-//    }
-
     @Override
     public List<MemberDto> findAll() {
         return memberRepository.findAll()

@@ -33,16 +33,6 @@ public class MemberController {
                 .body(MemberCreateResponse.of(dto.id(), dto.name(), dto.email()));
     }
 
-//    @PostMapping("/doLogin")
-//    public ResponseEntity<?> doLogin(@RequestBody MemberLoginDto dto) {
-//        Member member = memberService.login(dto);
-//        String token = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
-//        Map<String, Object> loginInfo = new HashMap<>();
-//        loginInfo.put("id", member.getId());
-//        loginInfo.put("token", token);
-//        return new ResponseEntity<>(loginInfo, HttpStatus.OK);
-//    }
-
     @GetMapping("/list")
     public ResponseEntity<ListResponse<MemberResponse>> memberList() {
         List<MemberDto> memberDtos = memberService.findAll();
