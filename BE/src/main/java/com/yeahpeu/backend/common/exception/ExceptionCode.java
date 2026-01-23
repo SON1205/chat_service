@@ -13,6 +13,10 @@ public enum ExceptionCode {
 
     // Auth
     INVALID_CREDENTIALS("INVALID_CREDENTIALS", "이메일 또는 비밀번호가 올바르지 않습니다."),
+    ACCOUNT_DISABLED("ACCOUNT_DISABLED", "비활성화된 계정입니다."),
+    ACCOUNT_LOCKED("ACCOUNT_LOCKED", "잠긴 계정입니다. 관리자에게 문의하세요."),
+    ACCOUNT_EXPIRED("ACCOUNT_EXPIRED", "만료된 계정입니다."),
+    CREDENTIALS_EXPIRED("CREDENTIALS_EXPIRED", "비밀번호가 만료되었습니다. 비밀번호를 변경해주세요."),
     INVALID_TOKEN("INVALID_TOKEN", "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN("EXPIRED_TOKEN", "만료된 토큰입니다."),
     INVALID_REFRESH_TOKEN("INVALID_REFRESH_TOKEN", "유효하지 않은 Refresh Token입니다."),

@@ -1,7 +1,8 @@
-package com.yeahpeu.backend.common.auth.filter;
+package com.yeahpeu.backend.auth.common.filter;
 
-import com.yeahpeu.backend.common.auth.jwt.JwtProvider;
-import com.yeahpeu.backend.common.auth.userdetails.CustomUserDetailsService;
+import com.yeahpeu.backend.auth.common.jwt.JwtProvider;
+import com.yeahpeu.backend.auth.common.repository.AccessTokenBlacklistRepository;
+import com.yeahpeu.backend.auth.common.userdetails.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,9 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-/**
- * JWT 토큰 기반 인증을 처리하는 필터 (요청 인증용) Authorization 헤더의 Bearer 토큰을 검증하여 SecurityContext에 인증 정보를 저장
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -30,23 +28,18 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
     private final CustomUserDetailsService userDetailsService;
+    private final AccessTokenBlacklistRepository accessTokenBlacklistRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            // 1. 토큰 추출
             String token = extractToken(request);
 
-            // 2. 토큰 검증 및 인증 처리
-            if (token != null && jwtProvider.validateToken(token)) {
-                // 3. 토큰에서 사용자 ID 추출
+            if (token != null && jwtProvider.validateToken(token) && !isBlacklisted(token)) {
                 Long memberId = jwtProvider.getMemberId(token);
-
-                // 4. UserDetails 조회
                 UserDetails userDetails = userDetailsService.loadUserById(memberId);
 
-                // 5. Authentication 생성
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
@@ -54,8 +47,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 );
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // 6. SecurityContext에 저장
-                // 그래야 controller에서 사용자 정보 접근 가능
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 log.debug("JWT 인증 성공: memberId={}, uri={}", memberId, request.getRequestURI());
@@ -77,5 +68,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             return bearerToken.substring(BEARER_PREFIX.length());
         }
         return null;
+    }
+
+    private boolean isBlacklisted(String token) {
+        return accessTokenBlacklistRepository.existsById(token);
     }
 }

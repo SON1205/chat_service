@@ -1,4 +1,4 @@
-package com.yeahpeu.backend.common.auth.userdetails;
+package com.yeahpeu.backend.auth.common.userdetails;
 
 import com.yeahpeu.backend.member.domain.Member;
 import com.yeahpeu.backend.member.repository.MemberRepository;

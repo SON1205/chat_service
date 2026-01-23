@@ -1,4 +1,4 @@
-package com.yeahpeu.backend.common.auth.jwt;
+package com.yeahpeu.backend.auth.common.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -10,12 +10,14 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import java.util.Date;
 import javax.crypto.SecretKey;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@Getter
 public class JwtProvider {
     private final SecretKey secretKey;
     private final long accessExpiration;
@@ -31,7 +33,6 @@ public class JwtProvider {
         this.refreshExpiration = refreshExpiration;
     }
 
-    // 지금은 대칭키이지만, 향후 비대칭키(공개키/비밀키)로 변경
     public String generateAccessToken(Long userId, String role) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + accessExpiration);
@@ -80,6 +81,12 @@ public class JwtProvider {
 
     public Long getMemberId(String token) {
         return Long.parseLong(getClaims(token).getSubject());
+    }
+
+    public long getRemainingExpiration(String token) {
+        Date expiration = getClaims(token).getExpiration();
+        long remaining = expiration.getTime() - System.currentTimeMillis();
+        return Math.max(remaining / 1000, 0);
     }
 
     private Claims getClaims(String token) {

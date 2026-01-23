@@ -1,4 +1,4 @@
-package com.yeahpeu.backend.common.auth.handler;
+package com.yeahpeu.backend.auth.common.handler;
 
 import static com.yeahpeu.backend.common.exception.ExceptionCode.ACCESS_DENIED;
 
@@ -16,9 +16,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
-/**
- * 인증은 되었지만 권한이 없는 사용자가 리소스에 접근할 때 호출되는 핸들러 (403)
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor

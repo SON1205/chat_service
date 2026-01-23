@@ -1,8 +1,8 @@
-package com.yeahpeu.backend.common.auth.config;
+package com.yeahpeu.backend.auth.common.config;
 
-import com.yeahpeu.backend.common.auth.filter.JwtAuthorizationFilter;
-import com.yeahpeu.backend.common.auth.handler.CustomAccessDeniedHandler;
-import com.yeahpeu.backend.common.auth.handler.CustomAuthenticationEntryPoint;
+import com.yeahpeu.backend.auth.common.filter.JwtAuthorizationFilter;
+import com.yeahpeu.backend.auth.common.handler.CustomAccessDeniedHandler;
+import com.yeahpeu.backend.auth.common.handler.CustomAuthenticationEntryPoint;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -30,14 +30,12 @@ public class SecurityConfig {
     private static final String[] PUBLIC_URLS = {
             "/v1/member/create",
             "/v1/auth/login",
-            "/v1/auth/refresh",
+            "/v2/auth/login",
+            "/v2/auth/refresh",
             "/v1/connect/**"
     };
 
-    // 필터
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
-
-    // 핸들러
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
     private final CustomAccessDeniedHandler accessDeniedHandler;
 
@@ -52,19 +50,16 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                // 예외 처리 핸들러 등록
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(authenticationEntryPoint)  // 인증 실패
-                        .accessDeniedHandler(accessDeniedHandler)  // 권한 부족
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler)
                 )
-                // URL 접근 권한 설정
                 .authorizeHttpRequests(
                         a -> a.requestMatchers(PUBLIC_URLS)
                                 .permitAll()
                                 .anyRequest()
                                 .authenticated()
                 )
-                // JWT 인증 필터 등록
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -81,13 +76,11 @@ public class SecurityConfig {
         return source;
     }
 
-    // 비밀번호 암호화를 위한 BCryptPasswordEncoder 빈 등록
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(BCRYPT_STRENGTH);
     }
 
-    // 로그인 시 사용자의 인증(Authentication)을 담당
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {

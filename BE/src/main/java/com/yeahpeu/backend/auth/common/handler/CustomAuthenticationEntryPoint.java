@@ -1,4 +1,4 @@
-package com.yeahpeu.backend.common.auth.handler;
+package com.yeahpeu.backend.auth.common.handler;
 
 import static com.yeahpeu.backend.common.exception.ExceptionCode.UNAUTHORIZED;
 
@@ -16,9 +16,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-/**
- * 인증되지 않은 사용자가 보호된 리소스에 접근할 때 호출되는 핸들러 (401) 정의를 하지 않으면 spring의 기본 오류페이지를 보여줌
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
